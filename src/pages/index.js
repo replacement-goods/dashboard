@@ -1,21 +1,62 @@
+import { graphql } from "gatsby"
 import React from "react"
-import { Link } from "gatsby"
+import withLocation from '../components/withLocation';
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
+class IndexComponent extends React.Component {
+  render() {
+    const userId = this.props.search.user_id;
+    if (!userId) {
+      return;
+    }
+    const data = this.props.data.allContributionsCsv.edges;
+    const cleanData = data.filter((row) => row.node.Referrer_ID === userId);
+    let total = 0;
+    cleanData.map((row) => {
+      total += Number(row.node.Amount.replace(/[^0-9.-]+/g,""));
+    });
+    return (
+      <div style={{ maxWidth: '1024px', width: 'calc(100% - 50px)', margin: '0 auto' }}>
+        <p>You've earned {`$${total.toFixed(2)}`} to date, worth {total / 2} shares.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Referrer</th>
+              <th>Name</th>
+              <th>Amount</th>
+              <th>Shares Earned</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cleanData.map((row, i) => (
+              <tr key={`${row.node.Pledge_ID} ${i}`}>
+                <td>{row.node.Pledge_ID}</td>
+                <td>{row.node.Referrer_ID}</td>
+                <td>{row.node.Name}</td>
+                <td>{row.node.Amount}</td>
+                <td>{Number(row.node.Amount.replace(/[^0-9.-]+/g,"")) / 2}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+}
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link>
-  </Layout>
-)
+export default withLocation(IndexComponent);
 
-export default IndexPage
+export const IndexQuery = graphql`
+  query {
+    allContributionsCsv {
+      edges {
+        node {
+          Name
+          Pledge_ID
+          Referrer_ID
+          Amount
+        }
+      }
+    }
+  }
+`
