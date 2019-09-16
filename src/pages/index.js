@@ -6,7 +6,9 @@ class IndexComponent extends React.Component {
   render() {
     const userId = this.props.search.user_id;
     if (!userId) {
-      return;
+      return (
+        <p>Nothing to see here.</p>
+      );
     }
     const data = this.props.data.allContributionsCsv.edges;
     const cleanData = data.filter((row) => row.node.Referrer_ID === userId);
