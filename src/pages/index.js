@@ -20,7 +20,7 @@ class IndexComponent extends React.Component {
     console.log('has no referfals', hasNoReferrals);
     return (
       <div style={{ maxWidth: '1024px', width: 'calc(100% - 50px)', margin: '0 auto' }}>
-        <p style={{ margin: '1em 0' }}>You've earned {`$${total.toFixed(2)}`} to date, worth {total / 2} shares.</p>
+        <p style={{ margin: '1em 0' }}>You've earned {`$${total.toFixed(2)}`} to date, worth {(total / 2) + 250} shares.</p>
         {hasNoReferrals
           ? <p>No referrals yet!</p>
           : <table>
